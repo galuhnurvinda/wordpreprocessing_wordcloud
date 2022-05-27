@@ -38,37 +38,37 @@
                 
     komen['komen'] = komen['komen'].apply(remove_tweet_special)
 
-#remove number
+    #remove number
     def remove_number(text):
     return  re.sub(r"\d+", "", text)
 
     komen['komen'] = komen['komen'].apply(remove_number)
 
-#remove punctuation
+    #remove punctuation
     def remove_punctuation(text):
      return text.translate(str.maketrans("","",string.punctuation))
 
     komen['komen'] = komen['komen'].apply(remove_punctuation)
 
-#remove whitespace leading & trailing
+    #remove whitespace leading & trailing
     def remove_whitespace_LT(text):
      return text.strip()
 
     komen['komen'] = komen['komen'].apply(remove_whitespace_LT)
 
-#remove multiple whitespace into single whitespace
+    #remove multiple whitespace into single whitespace
     def remove_whitespace_multiple(text):
         return re.sub('\s+',' ',text)
 
     komen['komen'] = komen['komen'].apply(remove_whitespace_multiple)
 
-# remove single char
+    # remove single char
     def remove_singl_char(text):
      return re.sub(r"\b[a-zA-Z]\b", "", text)
 
     komen['komen'] = komen['komen'].apply(remove_singl_char)
 
-# NLTK word rokenize 
+    # NLTK word rokenize 
     def word_tokenize_wrapper(text):
         return word_tokenize(text)
 
@@ -84,7 +84,7 @@
     list_stopwords = stopwords.words('indonesian')
 
 
-# append additional stopword
+    # append additional stopword
     list_stopwords.extend(['assalamualaikum', 'hayu', 'mba', 'ala', 'pas', 'nanabisa', 'batalbrsekarang', 'rakyat', 'nana',
                        'andovi', 'dovi', 'jovial', 'jovi', 'najwa', 'karaoke', 'gorden', 'uang', 'ganti', 'corong', 'lho', 
                        'benerbener', 'yah', 'ka', 'kak', 'ya', 'yak', 'orgquot', 'nya', 'hayuu', 'si', 'mbak', 'mas', 'abang', 
@@ -101,59 +101,59 @@
                       'tidak', 'gak', 'ga', 'tdk', 'min', 'knp', 'pd', 'tuh', 'rm', 'kayak', 'rap', 'sj', 'saja', 'karena',
                       'karna', 'pke', 'kalau', 'dah', 'udah', 'kalau', 'sja','aja'])
 
-     # read txt stopword using pandas
-        txt_stopword = pd.read_csv("C:/Galuh/stopword.txt", names= ["stopword"], header = None)
+        # read txt stopword using pandas
+        txt_stopword = pd.read_csv("C:/Galuh/stopword.txt", names= ["stopword"], header = None) #change path
 
-     # convert stopword string to list & append additional stopword
+        # convert stopword string to list & append additional stopword
          list_stopwords.extend(txt_stopword["stopword"][0].split(' '))
 
-    # convert list to dictionary
+         # convert list to dictionary
         list_stopwords = set(list_stopwords)
 
-    #remove stopword pada list token
-     def stopwords_removal(words):
+         #remove stopword pada list token
+         def stopwords_removal(words):
             return [word for word in words if word not in list_stopwords]
 
-     komen['komen_token_sw'] = komen['komen_tokens'].apply(stopwords_removal) 
+        komen['komen_token_sw'] = komen['komen_tokens'].apply(stopwords_removal) 
 
-     print('Stopword Result: \n')
-     print(komen['komen_token_sw'])
-        print('\n\n\n')
+         print('Stopword Result: \n')
+         print(komen['komen_token_sw'])
+         print('\n\n\n')
 
 # ------------------------------------normalization---------------------------------------------
-    normalizad_word = pd.read_excel("C:/Galuh/normalisasi.xlsx") #change path
+      normalizad_word = pd.read_excel("C:/Galuh/normalisasi.xlsx") #change path
 
-    normalizad_word_dict = {}
+     normalizad_word_dict = {}
 
-    for index, row in normalizad_word.iterrows():
-     if row[0] not in normalizad_word_dict:
+     for index, row in normalizad_word.iterrows():
+         if row[0] not in normalizad_word_dict:
             normalizad_word_dict[row[0]] = row[1] 
 
-    def normalized_term(document):
+     def normalized_term(document):
         return [normalizad_word_dict[term] if term in normalizad_word_dict else term for term in document]
 
-    komen['komen_normalize']=komen['komen_token_sw'].apply(normalized_term)
-    komen['komen_normalize'].head(10)
+     komen['komen_normalize']=komen['komen_token_sw'].apply(normalized_term)
+     komen['komen_normalize'].head(10)
 
 # -------------------------stemmer----------------------------
-   #create stemmer
-    factory = StemmerFactory()
-    stemmer = factory.create_stemmer()
+     #create stemmer
+     factory = StemmerFactory()
+     stemmer = factory.create_stemmer()
 
-   #stemmed
-    def stemmed_wrapper(term):
-        return stemmer.stem(term)
+     #stemmed
+     def stemmed_wrapper(term):
+            return stemmer.stem(term)
 
-    term_dict = {}
-    for document in komen['komen_normalize']:
+     term_dict = {}
+     for document in komen['komen_normalize']:
         for term in document:
             if term not in term_dict:
                 term_dict[term] = ' '
             
-    print(len(term_dict))
-    print("------------------------")
+     print(len(term_dict))
+        print("------------------------")
 
-    for term in term_dict:
+     for term in term_dict:
         term_dict[term] = stemmed_wrapper(term)
         print(term,":" ,term_dict[term])
     
@@ -174,7 +174,7 @@
     import matplotlib.pyplot as plt
     import pandas as pd
 
-#Reads csv file
+    #Reads csv file
     df = pd.read_csv("C:/Galuh/prep.csv", encoding ="latin-1")
  
     comment_words = ''
